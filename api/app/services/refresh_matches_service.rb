@@ -5,7 +5,6 @@ class RefreshMatchesService
   default_params api_key: '5ugpasdtdz72ybfwqh84dzrt'
 
   def initialize(params)
-    @matches = []
     @date = Date.parse(params[:date])
   end
 
@@ -17,31 +16,52 @@ class RefreshMatchesService
     resource = @date < Date.today ? 'results' : 'schedule'
     response = self.class.get "/#{@date}/#{resource}.json"
 
-    raise response.parsed_response unless response.success?
+    return response.parsed_response unless response.success?
     push_to_db(response.parsed_response)
-    @matches
+    true
   end
 
   private
 
-  def push_to_db(unparsed_json)
-    parsed_json = ActiveSupport::JSON.decode(unparsed_json)
-
-    parsed_json['results'].each do |result|
-      @matches << match = create_match(result['sport_event']['scheduled'])
-
-      result['competitors'].each do |competitor|
-        team = get_team(competitor)
-        goals = parse_goals_count(result['event_status_json'],
-                                  competitor['qualifier'])
-        Score.create(match: match, team: team, goals_count: goals)
-      end
+  def push_to_db(parsed_response)
+    (parsed_response['sport_events'] ||
+      parsed_response['results']).each do |event|
+      event = event['sport_event'] if event['sport_event']
+      handle_event(event)
     end
   end
 
-  def create_match(date_time)
-    Match.create(date_time:
-      DateTime.strptime(date_time, '%Y-%m-%dT%H:%M:%S%z'))
+  def handle_event(event)
+    match = resolve_match(event['id'], event['scheduled'])
+
+    event['competitors'].each do |competitor|
+      team = get_team(competitor)
+      if event['event_status_json']
+        goals = parse_goals_count(event['event_status_json'],
+                                  competitor['qualifier'])
+      end
+      Score.create(match: match, team: team, goals_count: goals)
+    end
+  end
+
+  def resolve_match(identifier, date_time)
+    update_match(get_match(identifier), date_time) ||
+      create_match(identifier, date_time)
+  end
+
+  def get_match(identifier)
+    Match.find_by_identifier(identifier)
+  end
+
+  def create_match(identifier, date_time)
+    Match.create(date_time: date_time, identifier: identifier)
+  end
+
+  def update_match(match, date_time)
+    dt = DateTime.strptime(date_time, '%Y-%m-%dT%H:%M:%S%z')
+
+    match.update_attributes(date_time: dt) if match && match.date_time != dt
+    match
   end
 
   def get_team(team_json)

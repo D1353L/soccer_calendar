@@ -2,9 +2,18 @@ class Api::V1::MatchesController < ApplicationController
   respond_to :json
 
   def show
-    @matches = Match.find_by_date_time(match_params[:date]) unless match_params[:refresh]
+    @matches = Match.on_day(match_params[:date].to_date)
 
-    render json: @matches || refresh_matches
+    unless @matches
+      refresh_matches
+      @matches = Match.on_day(match_params[:date].to_date)
+    end
+
+    render json: @matches
+  end
+
+  def refresh
+    render json: refresh_matches
   end
 
   private
@@ -14,6 +23,6 @@ class Api::V1::MatchesController < ApplicationController
   end
 
   def match_params
-    params.permit(:date, :refresh)
+    params.permit(:date)
   end
 end
