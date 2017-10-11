@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: postgres
+  password: admin123
+
+development:
+  <<: *default
+  database: soccer_calendar_development
+
+test:
+  <<: *default
+  database: soccer_calendar_test
+
+production:
+  <<: *default
+  database: soccer_calendar_production
+  url: <%= ENV["DATABASE_URL"] %>
