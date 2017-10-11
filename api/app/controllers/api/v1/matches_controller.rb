@@ -1,15 +1,12 @@
 class Api::V1::MatchesController < ApplicationController
-  respond_to :json
-
-  def show
+  def index
     @matches = Match.on_day(match_params[:date].to_date)
+    return if @matches.present?
 
-    unless @matches
-      refresh_matches
-      @matches = Match.on_day(match_params[:date].to_date)
-    end
+    response = refresh_matches
+    render json: response if response.is_a?(Hash)
 
-    render json: @matches
+    @matches = Match.on_day(match_params[:date].to_date)
   end
 
   def refresh

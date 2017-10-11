@@ -5,6 +5,7 @@ class Match < ApplicationRecord
   validates_presence_of :date_time, :identifier
   validates_uniqueness_of :identifier
 
+  default_scope { order('date_time ASC') }
   scope :on_day, (lambda do |someday|
     where(date_time: (someday)..(someday + 1.day))
   end)

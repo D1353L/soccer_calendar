@@ -24,43 +24,44 @@ class RefreshMatchesService
   private
 
   def push_to_db(parsed_response)
-    (parsed_response['sport_events'] ||
-      parsed_response['results']).each do |event|
-      event = event['sport_event'] if event['sport_event']
+    (
+      parsed_response['sport_events'] || parsed_response['results']
+    ).each do |event|
       handle_event(event)
     end
   end
 
   def handle_event(event)
+    event_status = event['sport_event_status'] if event['sport_event_status']
+    event = event['sport_event'] if event['sport_event']
     match = resolve_match(event['id'], event['scheduled'])
 
     event['competitors'].each do |competitor|
       team = get_team(competitor)
-      if event['event_status_json']
-        goals = parse_goals_count(event['event_status_json'],
-                                  competitor['qualifier'])
+
+      if event_status
+        goals_count = parse_goals_count(event_status, competitor['qualifier'])
       end
-      Score.create(match: match, team: team, goals_count: goals)
+      Score.create(match: match, team: team, goals_count: goals_count)
     end
   end
 
   def resolve_match(identifier, date_time)
     update_match(get_match(identifier), date_time) ||
-      create_match(identifier, date_time)
+      Match.create(date_time: date_time, identifier: identifier)
   end
 
   def get_match(identifier)
     Match.find_by_identifier(identifier)
   end
 
-  def create_match(identifier, date_time)
-    Match.create(date_time: date_time, identifier: identifier)
-  end
-
   def update_match(match, date_time)
     dt = DateTime.strptime(date_time, '%Y-%m-%dT%H:%M:%S%z')
 
-    match.update_attributes(date_time: dt) if match && match.date_time != dt
+    if match
+      match.scores.destroy_all
+      match.update_attributes(date_time: dt) if match.date_time != dt
+    end
     match
   end
 
@@ -71,6 +72,6 @@ class RefreshMatchesService
   end
 
   def parse_goals_count(event_status_json, qualifier)
-    event_status_json["#{qualifier}_score"]
+    event_status_json["#{qualifier}_score"].to_i
   end
 end
