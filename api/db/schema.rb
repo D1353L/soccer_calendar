@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 20171011140632) do
   enable_extension "plpgsql"
 
   create_table "matches", force: :cascade do |t|
-    t.datetime "date_time"
+    t.datetime "date_time", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -32,7 +32,7 @@ ActiveRecord::Schema.define(version: 20171011140632) do
   end
 
   create_table "teams", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.string "country_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
