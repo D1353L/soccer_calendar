@@ -16,7 +16,7 @@ class Api::V1::MatchesController < ApplicationController
   private
 
   def refresh_matches
-    RefreshMatchesService.perform(match_params)
+    LoadDataFromSportradarService.perform(match_params)
   end
 
   def match_params

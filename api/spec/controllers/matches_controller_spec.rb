@@ -1,19 +1,17 @@
 require 'rails_helper'
 
-RSpec.describe MatchesController, type: :controller do
-
-  describe "GET #show" do
-    it "returns http success" do
-      get :show
+RSpec.describe Api::V1::MatchesController, type: :controller do
+  describe 'GET #index' do
+    it 'returns http success' do
+      get :index, params: { date: '2017-11-11' }
       expect(response).to have_http_status(:success)
     end
   end
 
-  describe "GET #refresh" do
-    it "returns http success" do
-      get :refresh
+  describe 'POST #refresh' do
+    it 'returns http success' do
+      post :refresh, params: { date: '2017-11-11' }
       expect(response).to have_http_status(:success)
     end
   end
-
 end

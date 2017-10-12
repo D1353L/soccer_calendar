@@ -1,4 +1,4 @@
-class RefreshMatchesService
+class LoadDataFromSportradarService
   include HTTParty
 
   base_uri 'https://api.sportradar.us/soccer-xt3/eu/en/schedules'

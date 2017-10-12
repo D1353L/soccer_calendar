@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171011185539) do
+ActiveRecord::Schema.define(version: 20171012082009) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "matches", force: :cascade do |t|
-    t.datetime "date_time", null: false
+    t.datetime "date_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "identifier"
