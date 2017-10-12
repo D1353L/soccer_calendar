@@ -1,0 +1,27 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %title Soccer calendar
+    %link{:href => "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css", :rel => "stylesheet"}/
+    %link{:href => "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css", :rel => "stylesheet"}/
+    %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"}
+    %script{:src => "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"}
+    %script{:src => "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.16.0/moment.min.js"}
+    %script{:src => "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/js/bootstrap-datetimepicker.min.js", :type => "text/javascript"}
+    %script{:src => "https://cdnjs.cloudflare.com/ajax/libs/json2html/1.0.0/json2html.min.js", :type => "text/javascript"}
+    %script{:src => "/public/assets/js/scripts.js"}
+  %body
+    #container
+      %h1{:align => "center"} Welcome to the Soccer Calendar App
+      .panel-body.content{:align => "center"}
+        #datetimepicker
+        %h3#tableTitle{:align => "center"}
+        %a#refresh.btn.btn-info{:href => "#", :role => "button"} Refresh
+        #message
+        %table.table#table
+          %thead
+            %tr
+              %th Time
+              %th Teams
+              %th Score
+          %tbody
