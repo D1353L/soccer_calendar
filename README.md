@@ -1,6 +1,6 @@
 # soccer_calendar
-
-#Preview
+Displays calendar of past and further soccer matches from sportradar.com
+# Preview
 <p align="center">
 <img src = "https://s1.postimg.org/1nopprr7gf/soccer_calendar.png" />
 </p>
