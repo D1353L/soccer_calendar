@@ -6,7 +6,7 @@ window.onload=function(){
  }
 
 $(document).ready(function () {
-    LoadSoccerMatches(moment());
+    LoadSoccerMatches(moment())
 
     $('#datetimepicker').datetimepicker({
         inline: true,
@@ -22,7 +22,6 @@ $(document).ready(function () {
         e.preventDefault()
         date = $(this).attr('data-date')
         Refresh(date)
-        LoadSoccerMatches(moment(date))
     })
 
 });
@@ -65,6 +64,8 @@ function Refresh(date){
     $.ajax({
       type: "POST",
       url: 'http://localhost:3000/api/v1/matches/refresh',
-      data: {date: date},
+      data: {date: date}
+    }).done(function() {
+        LoadSoccerMatches(moment(date))
     });
 }
